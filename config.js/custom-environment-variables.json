@@ -1,0 +1,4 @@
+{
+    "jwtPrivateKey": "veps_jwtPrivateKey",
+    "db": "veps_db"
+}
