@@ -20,5 +20,5 @@ function validateType(type) {
 }
 
 exports.typeSchema = typeSchema;
-exports.Type = Typr; 
+exports.Type = Type; 
 exports.validate = validateType;

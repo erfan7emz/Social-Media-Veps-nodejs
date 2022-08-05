@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const mongoose = require('mongoose')
-const jwt = require('jsonwebtoken');
-const config = require('config')
+// const jwt = require('jsonwebtoken');
+// const config = require('config')
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -41,24 +41,24 @@ const userSchema = new mongoose.Schema({
         maxlength: 1024
     },
     followers: [{
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
     followings: [{
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-    links: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Link'
+    posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post'
     }],
     isAdmin: Boolean,
 });
 
-userSchema.methods.generateAuthToken = function() {
-    const token = jwt.sign({ _id: this._id, isAdmin: this.isAdmin, firstName: this.firstName, lastName: this.lastName }, config.get('jwtPrivateKey'))
-    return token;
-}
+// userSchema.methods.generateAuthToken = function() {
+//     const token = jwt.sign({ _id: this._id, isAdmin: this.isAdmin, firstName: this.firstName, lastName: this.lastName }, config.get('jwtPrivateKey'))
+//     return token;
+// }
 
 const User = mongoose.model('User', userSchema);
 

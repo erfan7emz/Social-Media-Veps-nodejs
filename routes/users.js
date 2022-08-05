@@ -3,7 +3,8 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const _ = require('lodash')
 const { User, validateUser} = require('../models/user')
-const auth = require('../middleware/auth') //authorization
+//const auth = require('../middleware/auth') //authorization
+const validateObjectId = require('../middleware/validateObjectId')
 
 //create new user
 router.post('/', async (req, res) => {
@@ -24,12 +25,13 @@ router.post('/', async (req, res) => {
     user.password = await bcrypt.hash(user.password, salt)
 
     await user.save();
-    const token = user.generateAuthToken();
-    res.header('x-auth-token', token)
-    .header('access-control-expose-headers', 'x-auth-token')
-    .send(_.pick(user, ['_id', 'username', 'firstName',
-    'lastName', 'email', 'bio'
-    ]));
+    // const token = user.generateAuthToken();
+    // res.header('x-auth-token', token)
+    // .header('access-control-expose-headers', 'x-auth-token')
+    // .send(_.pick(user, ['_id', 'username', 'firstName',
+    // 'lastName', 'email', 'bio'
+    // ]));
+    res.send(user)
 });
 
 /*
@@ -38,7 +40,8 @@ follow a user
         and 
     2. add to the followers of the followed user
 */
-router.put("/:id/follow", auth, async(req, res) => {
+//auth
+router.put("/:id/follow", validateObjectId, async(req, res) => {
     if(req.body.userId === req.params.id) {
         return res.send('You cannot follow yourself')
     }
@@ -54,7 +57,8 @@ router.put("/:id/follow", auth, async(req, res) => {
 });
 
 //unfollow a user
-router.put("/:id/follow", auth, async(req, res) => {
+//auth
+router.put("/:id/follow", validateObjectId, async(req, res) => {
     if(req.body.userId === req.params.id) {
         return res.send('You cannot unfollow yourself')
     }
@@ -70,7 +74,8 @@ router.put("/:id/follow", auth, async(req, res) => {
 });
 
 // update user info (bio and first/last name for now)
-router.put('/:id', auth, async (req, res) => {
+//auth
+router.put('/:id', validateObjectId, async (req, res) => {
     const { error } = validateCompany(req.body);
     if(error) return res.status(400).send(error.details[0].message);
     if(req.body.userId !== req.params.id && !req.body.isAdmin) {
@@ -90,7 +95,8 @@ router.put('/:id', auth, async (req, res) => {
 
 
 //delete an account
-router.delete('/:id', auth, async (req, res) => {
+//auth
+router.delete('/:id', validateObjectId, async (req, res) => {
     if(req.body.userId !== req.params.id && !req.body.isAdmin) {
         return res.status(400).send('You can only delete your account');
     }
@@ -101,11 +107,12 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 //get user by id
-router.get('/:id', auth, async (req, res) => {
+//auth
+router.get('/:id', validateObjectId, async (req, res) => {
     const user = await User.findById(req.body.id)
     .populate('followers', 'username')
     .populate('followings', 'username')
-    .populate('links')
+    .populate('posts')
     .select('-password');
     if(!user) return res.status(404).send('The user was not found');
     res.send(user);
