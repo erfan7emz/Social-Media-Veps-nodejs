@@ -8,7 +8,8 @@ const postSchema = new mongoose.Schema({
     },
     type: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Type'
+        ref: 'Type',
+        // required: true
     },
     content: {
         type: String,
