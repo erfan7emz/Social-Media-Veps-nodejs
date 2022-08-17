@@ -7,9 +7,10 @@ const postSchema = new mongoose.Schema({
         required: true,
     },
     type: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Type',
-        // required: true
+        type: String,
+        required: true,
+        minlength: 2,
+        maxlength: 30
     },
     content: {
         type: String,
@@ -33,6 +34,7 @@ function validatePost(post) {
     const schema = Joi.object({
         userId: Joi.string().required(),
         content: Joi.string().min(2).max(500).required(),
+        type: Joi.string().min(2).max(30).required(),
         caption: Joi.string().min(2).max(500).required(),
     });
     return schema.validate(post);

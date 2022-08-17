@@ -58,13 +58,13 @@ router.put("/:id/follow", validateObjectId, async(req, res) => {
 
 //unfollow a user
 //auth
-router.put("/:id/follow", validateObjectId, async(req, res) => {
+router.put("/:id/unfollow", validateObjectId, async(req, res) => {
     if(req.body.userId === req.params.id) {
         return res.send('You cannot unfollow yourself')
     }
     const currentUser = await User.findById(req.body.userId)
     const user = await User.findById(req.params.id)
-    if(!user.followers.includes(req.body.userId)) {
+    if(user.followers.includes(req.body.userId)) {
         await user.updateOne({$pull: { followers: req.body.userId }})
         await currentUser.updateOne({$pull: { followings: req.params.id }})
     } else {
